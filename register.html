@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h1 class="card-title text-center mb-4">Создать аккаунт</h1>
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <div class="form-group">
+                            <label for="username"><i class="fas fa-user mr-2"></i>Nickname</label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Введите свой будущий никнейм" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password"><i class="fas fa-lock mr-2"></i>Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Введите свой будущий пароль" required>
+                        </div>
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">Зарегистрироваться</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>Уже имеете у нас аккаунт? <a href="{{ url_for('login') }}" class="text-primary">Войдите!</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

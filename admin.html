@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора</title>
+    <style>
+        body {
+            background-color: #0d1b2a;
+            color: #e0e1dd;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #e0e1dd;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .video-card {
+            background-color: rgba(29, 53, 87, 0.85);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.3);
+        }
+
+        .video-card h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .video-card p {
+            margin: 0.5rem 0;
+        }
+
+        .video-controls button {
+            margin-right: 0.5rem;
+            border: none;
+            padding: 0.45rem 0.9rem;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .save-btn {
+            background-color: #2f9e44;
+        }
+
+        .save-btn:hover {
+            background-color: #37b24d;
+            transform: scale(1.05);
+        }
+
+        .delete-btn {
+            background-color: #c92a2a;
+        }
+
+        .delete-btn:hover {
+            background-color: #e03131;
+            transform: scale(1.05);
+        }
+
+        .comment {
+            background-color: rgba(47, 79, 112, 0.9);
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border-radius: 10px;
+        }
+
+        .comment small {
+            display: block;
+            color: #ccc;
+            margin-top: 0.3rem;
+        }
+
+        details summary {
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        form.inline {
+            display: inline;
+        }
+
+        .comment-buttons button,
+        .comment form button {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .comment .edit-btn {
+            background-color: #7048e8;
+        }
+
+        .comment .edit-btn:hover {
+            background-color: #9775fa;
+            transform: scale(1.05);
+        }
+
+        .comment .delete-btn {
+            background-color: #c92a2a;
+            margin-left: 0.3rem;
+        }
+
+        .comment .delete-btn:hover {
+            background-color: #e03131;
+            transform: scale(1.05);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: none;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #e0e1dd;
+            color: #000;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 0.5rem;
+        }
+        /* Стиль для полей ввода имени и пароля у пользователей */
+        input[type="password"] {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: none;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            background-color: #e0e1dd;
+            color: #000;
+            transition: box-shadow 0.3s ease;
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            box-shadow: 0 0 8px #1c7ed6;
+        }
+
+        /* Кнопки для управления пользователями */
+        form[action*="edit_user"] button,
+        form[action*="delete_user"] button {
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* Обновить */
+        form[action*="edit_user"] button {
+            background-color: #2f9e44;
+        }
+        form[action*="edit_user"] button:hover {
+            background-color: #37b24d;
+            transform: scale(1.05);
+        }
+
+        /* Удалить */
+        form[action*="delete_user"] button {
+            background-color: #c92a2a;
+        }
+        form[action*="delete_user"] button:hover {
+            background-color: #e03131;
+            transform: scale(1.05);
+        }  
+
+    </style>
+</head>
+<body>
+    <h1>⚙️ Панель администратора</h1>
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <a href="{{ url_for('index') }}" style="color: #1c7ed6; text-decoration: none; font-weight: bold;">
+            ← Вернуться на главную
+        </a>
+    </div>
+    <div style="max-width: 1200px; margin: 0 auto;">
+        {% for video in videos %}
+            <div class="video-card">
+                <h3>🎬 {{ video.title }}</h3>
+                <p>📝 {{ video.description }}</p>
+                <video height="200" controls>
+                    <source src="{{ url_for('uploaded_file', filename=video.filename) }}" type="video/mp4">
+                    Ваш браузер не поддерживает видео.
+                </video>
+
+                <form method="POST" action="{{ url_for('edit_video', video_id=video.id) }}">
+                    <input type="text" name="title" value="{{ video.title }}" placeholder="Новое название" required>
+                    <textarea name="description" placeholder="Новое описание">{{ video.description }}</textarea>
+                    <div class="video-controls">
+                        <button type="submit" class="save-btn">💾 Сохранить</button>
+                    </div>
+                </form>
+
+                <form method="POST" action="{{ url_for('delete_video', video_id=video.id) }}">
+                    <div class="video-controls">
+                        <button type="submit" class="delete-btn">🗑️ Удалить</button>
+                    </div>
+                </form>
+
+                <details>
+                    <summary>💬 Комментарии ({{ video.comments | length }})</summary>
+                    <ul style="list-style: none; padding-left: 0;">
+                        {% for comment in video.comments %}
+                            <li class="comment">
+                                <strong>{{ comment.author.username }}</strong>:
+                                <form class="inline" method="POST" action="{{ url_for('edit_comment', comment_id=comment.id) }}">
+                                    <textarea name="content" required>{{ comment.content }}</textarea>
+                                    <button type="submit" class="edit-btn">💾 Сохранить</button>
+                                </form>
+                                <small>🕒 {{ comment.timestamp.strftime('%d.%m.%Y %H:%M') }}</small>
+                                <form class="inline" method="POST" action="{{ url_for('delete_comment', comment_id=comment.id) }}">
+                                    <button type="submit" class="delete-btn">❌ Удалить</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            </div>
+        {% endfor %}
+        <hr style="margin: 3rem 0; border-color: #ccc;">
+    </div>
+
+<h2 style="text-align: center;">👥 Зарегистрированные пользователи</h2>
+<div style="max-width: 800px; margin: 0 auto;">
+    <ul style="list-style: none; padding-left: 0;">
+        {% for user in users %}
+        <li style="background-color: rgba(47, 79, 112, 0.9); padding: 1rem; border-radius: 12px; margin-bottom: 1rem;">
+            <form method="POST" action="{{ url_for('edit_user', user_id=user.id) }}">
+                <label>
+                    👤 Имя:
+                    <input type="text" name="username" value="{{ user.username }}" required>
+                </label>
+                <label>
+                    🔑 Новый пароль:
+                    <input type="password" name="password" placeholder="Оставьте пустым, если не меняете">
+                </label>
+                <button type="submit" class="save-btn">💾 Обновить</button>
+            </form>
+            <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" style="margin-top: 0.5rem;">
+                <button type="submit" class="delete-btn">❌ Удалить пользователя</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+</body>
+</html>
